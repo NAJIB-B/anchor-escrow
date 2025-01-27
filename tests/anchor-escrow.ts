@@ -127,7 +127,7 @@ describe("anchor-escrow", () => {
 
     const escrow = PublicKey.findProgramAddressSync(
       [
-        Buffer.from("vault"),
+        Buffer.from("escrow"),
         maker.publicKey.toBuffer(),
         seed.toArrayLike(Buffer, "le", 8),
       ],

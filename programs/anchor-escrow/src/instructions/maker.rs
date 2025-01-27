@@ -20,7 +20,7 @@ pub struct Make<'info> {
     #[account(
         init,
         payer = maker,
-        seeds = [b"vault", maker.key().as_ref(), seed.to_le_bytes().as_ref()],
+        seeds = [b"escrow", maker.key().as_ref(), seed.to_le_bytes().as_ref()],
         bump,
         space = 8 + Escrow::INIT_SPACE
     )]
