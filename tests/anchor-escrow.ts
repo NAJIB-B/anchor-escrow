@@ -27,6 +27,7 @@ describe("anchor-escrow", () => {
   anchor.setProvider(provider);
 
   const program = anchor.workspace.AnchorEscrow as Program<AnchorEscrow>;
+  const token_program = TOKEN_2022_PROGRAM_ID;
 
   const [maker, taker] = Array.from({ length: 2 }, () => Keypair.generate());
 
@@ -133,9 +134,7 @@ describe("anchor-escrow", () => {
       ],
       program.programId
     )[0];
-    console.log("escrow", escrow)
     const vault = getAssociatedTokenAddressSync(mint_a, escrow, true, TOKEN_PROGRAM_ID);
-    console.log("vault", vault)
 
     try {
       await program.methods
@@ -152,10 +151,10 @@ describe("anchor-escrow", () => {
         }).signers([maker])
         .rpc();
 
-      const account = await program.account.escrow.fetch(mint_a);
+      const account = await program.account.escrow.fetch(escrow);
 
-      assert.equal(account.mintA, mint_a);
-      assert.equal(account.maker, maker.publicKey);
+      assert.equal(account.mintA.toBase58(), mint_a.toBase58());
+      assert.equal(account.maker.toBase58(), maker.publicKey.toBase58());
     } catch (error) {
       console.log(error);
     }
