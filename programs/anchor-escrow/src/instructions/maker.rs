@@ -24,14 +24,14 @@ pub struct Make<'info> {
         bump,
         space = 8 + Escrow::INIT_SPACE
     )]
-    pub escrow: Account<'info, Escrow>,
+    pub escrow: Box<Account<'info, Escrow>>,
     #[account(
         init,
         payer = maker,
         associated_token::mint = mint_a,
         associated_token::authority = escrow
     )]
-    pub vault: InterfaceAccount<'info, TokenAccount>,
+    pub vault:Box<InterfaceAccount<'info, TokenAccount>>,
     pub system_program: Program<'info, System>,
     pub token_program: Interface<'info, TokenInterface>,
     pub associated_token_program: Program<'info, AssociatedToken>
