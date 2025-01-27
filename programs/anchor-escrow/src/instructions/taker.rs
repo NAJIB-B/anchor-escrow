@@ -13,24 +13,25 @@ pub struct Take<'info> {
     pub mint_a: InterfaceAccount<'info, Mint>,
     pub mint_b: InterfaceAccount<'info, Mint>,
     #[account(
+        mut,
         associated_token::mint = mint_b,
         associated_token::authority = taker
     )]
-    pub taker_ata_b: InterfaceAccount<'info, TokenAccount>,
+    pub taker_ata_b: Box<InterfaceAccount<'info, TokenAccount>>,
+
+    #[account(
+        init_if_needed,
+        payer = taker,
+        associated_token::mint = mint_a,
+        associated_token::authority = taker
+    )]
+    pub taker_ata_a:Box<InterfaceAccount<'info, TokenAccount>>,
 
     #[account(
         init_if_needed,
         payer = taker,
         associated_token::mint = mint_b,
-        associated_token::authority = taker
-    )]
-    pub taker_ata_a: InterfaceAccount<'info, TokenAccount>,
-
-    #[account(
-        init_if_needed,
-        payer = taker,
-        associated_token::mint = mint_b,
-        associated_token::authority = taker
+        associated_token::authority = maker
     )]
     pub maker_ata_b: InterfaceAccount<'info, TokenAccount>,
 
@@ -43,12 +44,13 @@ pub struct Take<'info> {
         seeds = [b"escrow", maker.key().as_ref(), escrow.seed.to_le_bytes().as_ref()],
         bump = escrow.bump
     )]
-    pub escrow: Account<'info, Escrow>, 
+    pub escrow:Box<Account<'info, Escrow>>, 
     #[account(
+        mut,
         associated_token::mint = mint_a,
         associated_token::authority = escrow,
     )]
-    pub vault: InterfaceAccount<'info, TokenAccount>,
+    pub vault: Box<InterfaceAccount<'info, TokenAccount>>,
     pub token_program: Interface<'info, TokenInterface>,
     pub system_program: Program<'info, System>,
     pub associated_token_program: Program<'info, AssociatedToken>
@@ -98,7 +100,6 @@ impl<'info> Take<'info> {
             authority: self.escrow.to_account_info(),
             destination: self.taker.to_account_info()
         };
-
 
 
 

@@ -120,11 +120,11 @@ describe("anchor-escrow", () => {
       `minted token b https://explorer.solana.com/tx/${mintBTx}?cluster=devnet`
     );
   };
+  const seed = new BN(randomBytes(8));
 
   it("Is initialized!", async () => {
     await initialize_accounts();
 
-    const seed = new BN(randomBytes(8));
 
     const escrow = PublicKey.findProgramAddressSync(
       [
@@ -155,6 +155,46 @@ describe("anchor-escrow", () => {
 
       assert.equal(account.mintA.toBase58(), mint_a.toBase58());
       assert.equal(account.maker.toBase58(), maker.publicKey.toBase58());
+    } catch (error) {
+      console.log(error);
+    }
+  });
+
+  it("taking", async () => {
+
+
+    const escrow = PublicKey.findProgramAddressSync(
+      [
+        Buffer.from("escrow"),
+        maker.publicKey.toBuffer(),
+        seed.toArrayLike(Buffer, "le", 8),
+      ],
+      program.programId
+    )[0];
+    const vault = getAssociatedTokenAddressSync(mint_a, escrow, true, TOKEN_PROGRAM_ID);
+
+    try {
+      await program.methods
+        .take()
+        .accountsStrict({
+          maker: maker.publicKey,
+          taker: taker.publicKey,
+          mintA: mint_a,
+          mintB: mint_b,
+          takerAtaA: taker_ata_a.address,
+          takerAtaB: taker_ata_b.address,
+          makerAtaB: maker_ata_b.address,
+          vault,
+          escrow,
+          tokenProgram: TOKEN_PROGRAM_ID,
+          associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+          systemProgram: anchor.web3.SystemProgram.programId
+        }).signers([taker])
+        .rpc();
+
+
+
+
     } catch (error) {
       console.log(error);
     }
