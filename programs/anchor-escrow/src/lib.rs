@@ -7,6 +7,7 @@ pub use instructions::*;
 
 declare_id!("HLze5gPcuXFLGov2y6Jbrbkm4zKVQ8gEAugv8JcBXDUz");
 
+#[allow(unexpected_cfgs)]
 #[program]
 pub mod anchor_escrow {
     use super::*;

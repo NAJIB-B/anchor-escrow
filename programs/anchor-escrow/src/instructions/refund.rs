@@ -12,6 +12,7 @@ pub struct Refund<'info> {
     pub mint_a: InterfaceAccount<'info, Mint>,
     pub mint_b: InterfaceAccount<'info, Mint>,
     #[account(
+        mut,
         associated_token::mint = mint_a,
         associated_token::authority = maker
     )]
@@ -28,6 +29,7 @@ pub struct Refund<'info> {
     )]
     pub escrow: Account<'info, Escrow>, 
     #[account(
+        mut,
         associated_token::mint = mint_a,
         associated_token::authority = escrow,
     )]
